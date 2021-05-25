@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
-import { makeStyles, Grid, Typography, TextField } from '@material-ui/core';
-
+import {
+  makeStyles,
+  Grid,
+  Typography,
+  TextField,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
+import {
+  CarouselProvider,
+  Slider,
+  Slide,
+  ButtonBack,
+  ButtonNext,
+} from 'pure-react-carousel';
 import SideNav from './SideNav';
+import { carouselImage } from '../../utils/data';
 
 const drawerWidth = 240;
 
@@ -34,46 +48,38 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
-  mainDiv: {
-    '& > .div:nth-child(3n)': {
-      backgroundColor: 'red',
-      color: 'black',
-    },
-  },
-  div: {
+  container: {
     padding: 20,
-    borderRadius: 5,
-    marginBottom: 20,
-    '&:nth-child(3n)': {
-      border: `1px solid blue`,
-    },
   },
-  charBox: {
-    border: '1px solid',
-    borderRadius: 5,
-    width: 200,
-    height: 200,
-    color: 'red',
+  carouselProvider: {
+    overflow: 'hidden',
+  },
+  slideDiv: {
+    position: 'relative',
+  },
+  slideText: {
+    position: 'absolute',
+    top: 100,
+    left: 500,
+    width: 800,
+  },
+  dynamicText: {
+    color: 'white',
+    textAlign: 'center',
+    'mix-blend-mode': 'difference',
+    fontSize: 50,
+    fontWeight: 'bold',
+    '& ::-webkit-text-stroke': '2px black',
+  },
+  ytDiv: {
+    position: 'fixed',
+    bottom: 20,
+    right: 20,
   },
 }));
 
 const Main = ({ handleDrawerClose, open }) => {
   const classes = useStyles();
-
-  const [stringArray, setStringArray] = useState('');
-  const [char, setChar] = useState([]);
-
-  console.log(stringArray);
-
-  useEffect(() => {
-    if (stringArray) {
-      let arr = stringArray.split('');
-      console.log(arr);
-      setChar(arr);
-    } else {
-      setChar([]);
-    }
-  }, [stringArray]);
 
   return (
     <div className={classes.root}>
@@ -84,53 +90,52 @@ const Main = ({ handleDrawerClose, open }) => {
         })}
       >
         <div className={classes.drawerHeader} />
-        <Grid style={{ marginTop: 20 }}>
-          <TextField
-            label='Enter anything'
-            variant='outlined'
-            style={{ width: 500 }}
-            onChange={(e) => {
-              setStringArray(e.target.value);
-            }}
-          />
-        </Grid>
-
-        <Grid container style={{ marginTop: 20 }}>
-          <Grid item xs={12}>
-            <Grid
-              container
-              direction='row'
-              justify='flex-start'
-              alignItems='flex-start'
-              className={classes.mainDiv}
+        <Grid className={classes.container}>
+          <Grid>
+            <CarouselProvider
+              naturalSlideWidth={300}
+              totalSlides={carouselImage.length}
+              isPlaying={true}
+              interval={3000}
+              visibleSlides={1}
+              className={classes.carouselProvider}
+              infinite={true}
+              isIntrinsicHeight={true}
             >
-              {char.length > 0 ? (
-                <>
-                  {char.map((items, i) => (
-                    <Grid key={i} className={classes.div}>
-                      <Grid container>
-                        <Grid item xs={12}>
-                          <Grid
-                            container
-                            direction='row'
-                            justify='center'
-                            alignItems='center'
-                            className={classes.charBox}
-                          >
-                            <Grid>
-                              <Typography style={{ fontSize: 50 }}>
-                                {items}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </Grid>
+              <Slider>
+                {carouselImage.map((items, i) => (
+                  <Slide index={i} key={i}>
+                    <Grid className={classes.slideDiv}>
+                      <img
+                        src={`/images/${items.image}`}
+                        alt=''
+                        style={{ width: '100%', height: 500 }}
+                      />
+                      <Grid className={classes.slideText}>
+                        <Typography
+                          align='center'
+                          className={classes.dynamicText}
+                        >
+                          {items.text}
+                        </Typography>
                       </Grid>
                     </Grid>
-                  ))}
-                </>
-              ) : null}
-            </Grid>
+                  </Slide>
+                ))}
+              </Slider>
+            </CarouselProvider>
           </Grid>
+        </Grid>
+        <Grid className={classes.ytDiv}>
+          <iframe
+            width='300'
+            height='200'
+            src='https://www.youtube.com/embed/_ITiwPMUzho'
+            title='YouTube video player'
+            frameborder='0'
+            allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+            allowfullscreen
+          ></iframe>
         </Grid>
       </main>
     </div>
