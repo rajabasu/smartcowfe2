@@ -75,7 +75,7 @@ const Navbar = ({ handleDrawerOpen, open }) => {
               align='center'
               className={classes.title}
             >
-              SmartCow Frontend Assignment Task 1
+              SmartCow Frontend Assignment Task 2
             </Typography>
           </Grid>
         </Toolbar>
